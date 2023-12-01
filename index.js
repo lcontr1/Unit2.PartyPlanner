@@ -28,12 +28,10 @@ const renderParties = (parties) => {
         partiesList.innerHTML = `<h4>No Party Planned</h4>`
     }
     const showParties = state.parties.map((party) => {
-        const date = party.date.split('T')[0]
-        const time = party.date.split('T')[1].split(':')[0]+':'+party.date.split('T')[1].split(':')[0]
         const partyElement = document.createElement('div')
         partyElement.innerHTML = `
         <h2>${party.name}</h2>
-        <h3>${date} at ${time}</h3>
+        <h3>${party.date}</h3>
         <h3>${party.location}</h3>
         <p>${party.description}</p>`
 
@@ -51,14 +49,6 @@ const renderParties = (parties) => {
 
 async function addParty(e) {
     e.preventDefault()
-    const dateControl = `${partyForm.partyDate.value}:00Z`;
-    const addedParty = {
-                name: partyForm.partyName.value,
-                date: dateControl,
-                location: partyForm.partyLocation.value,
-                description: partyForm.partyDescription.value,
-    }
-    console.log(addedParty)
     try {
         const response = await fetch(API_URL, {
             method: 'POST',
@@ -67,7 +57,7 @@ async function addParty(e) {
             },
             body: JSON.stringify({
                 name: partyForm.partyName.value,
-                date: dateControl,
+                date: new Date(partyForm.partyDate.value).toISOString(),
                 location: partyForm.partyLocation.value,
                 description: partyForm.partyDescription.value,
         }),  
