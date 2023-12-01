@@ -26,10 +26,7 @@ async function getParties() {
 const renderParties = (parties) => {
     if (!parties || parties.length === 0) {
         partiesList.innerHTML = `<h4>No Party Planned</h4>`
-       
     }
-    partiesList.innerHTML = ``
-console.log(partiesList)
     const showParties = state.parties.map((party) => {
         const date = party.date.split('T')[0]
         const time = party.date.split('T')[1].split(':')[0]+':'+party.date.split('T')[1].split(':')[0]
@@ -39,6 +36,13 @@ console.log(partiesList)
         <h3>${date} at ${time}</h3>
         <h3>${party.location}</h3>
         <p>${party.description}</p>`
+
+        const deleteButton = document.createElement('button')
+        deleteButton.textContent = 'Delete Event'
+        partyElement.append(deleteButton)
+
+        deleteButton.addEventListener('click', () => deleteEvent(party.id))
+
         return partyElement
     })
     partiesList.replaceChildren(...showParties)
@@ -73,9 +77,20 @@ async function addParty(e) {
     if(!response.ok) {
         throw new Error('Failed to create event')
     }
-    renderParties()
+    init();
     } catch(error) {
     console.error(error)
+    }
+}
+
+async function deleteEvent(id) {
+    try {
+        const response = await fetch(`${API_URL}/${id}`,{
+            method: 'DELETE',
+        })
+        init()
+    } catch (error) {
+        console.error(error)
     }
 }
 
